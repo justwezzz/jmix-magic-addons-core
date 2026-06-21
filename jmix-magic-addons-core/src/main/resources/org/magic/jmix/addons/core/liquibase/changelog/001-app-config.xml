@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="core-addon">
+        <createTable tableName="MAGIC_APP_CONFIG">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="CONFIG_KEY" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONFIG_VALUE" type="VARCHAR(256)"/>
+            <column name="DESCRIPTION" type="VARCHAR(256)"/>
+            <column name="CREATE_TS" type="DATETIME"/>
+            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATE_TS" type="DATETIME"/>
+            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="core-addon">
+        <createIndex indexName="IDX_APP_CONFIG_ON_KEY" tableName="MAGIC_APP_CONFIG" unique="true">
+            <column name="CONFIG_KEY"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

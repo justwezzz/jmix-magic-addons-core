@@ -1,0 +1,31 @@
+/*
+ * Jmix Magic Addons - Core (功能模块)
+ */
+apply plugin: 'java-library'
+apply plugin: 'io.jmix'
+apply plugin: 'maven-publish'
+
+group = 'org.magic.addons'
+archivesBaseName = 'jmix-magic-addons-core'
+
+jmix {
+    bomVersion = '2.8.1'
+    entitiesEnhancing {
+        enabled = true
+    }
+}
+
+dependencies {
+    api 'io.jmix.flowui:jmix-flowui'
+    api 'io.jmix.data:jmix-data'
+    // EclipseLink 增强器
+    implementation 'io.jmix.data:jmix-eclipselink-starter'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

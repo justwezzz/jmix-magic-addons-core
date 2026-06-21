@@ -1,0 +1,22 @@
+/*
+ * Jmix Magic Addons - Core Starter
+ */
+apply plugin: 'java-library'
+apply plugin: 'io.jmix'
+apply plugin: 'maven-publish'
+
+group = 'org.magic.addons'
+archivesBaseName = 'jmix-magic-addons-core-starter'
+
+dependencies {
+    api project(':jmix-magic-addons-core')
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

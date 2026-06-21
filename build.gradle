@@ -1,0 +1,27 @@
+/*
+ * Jmix Magic Addons - Core
+ */
+plugins {
+    id 'io.jmix' version '2.8.1' apply false
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://global.repo.jmix.io/repository/public' }
+    }
+
+    apply plugin: 'java'
+
+    java {
+        sourceCompatibility = '17'
+        targetCompatibility = '17'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+}
