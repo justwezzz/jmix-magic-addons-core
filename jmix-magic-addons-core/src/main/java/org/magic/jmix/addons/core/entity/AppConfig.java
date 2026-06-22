@@ -8,8 +8,8 @@ import jakarta.persistence.*;
  * 应用配置实体，简单的键值对存储
  */
 @JmixEntity
-@Entity(name = "magic_AppConfig")
-@Table(name = "MAGIC_APP_CONFIG", indexes = {
+@Entity(name = "magic_core_AppConfig")
+@Table(name = "MAGIC_CORE_APP_CONFIG", indexes = {
         @Index(name = "IDX_APP_CONFIG_ON_KEY", columnList = "CONFIG_KEY", unique = true)
 })
 public class AppConfig extends BaseEntity {

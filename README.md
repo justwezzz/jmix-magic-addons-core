@@ -29,23 +29,27 @@
   - `BaseDetailView<T>` - 详情视图基类，实现 `TabActivationAware`，提供自动标题（新建/编辑/查看）与保存状态追踪
 
   继承即可获得智能数据刷新（新建加顶 / 编辑刷新单行）与自动标题，配合增强 Action 实现 TAB/DIALOG 一致的 CRUD 时序。
+- **Jmix 框架翻译补充（基于 2.8）** - 补充 Jmix 框架未翻译的中文消息（分页、GenericFilter、连接状态指示器等），安装即生效
 
 ## 快速开始
 
-### 添加依赖
+### 1. 添加依赖
 
 ```groovy
-// build.gradle
-repositories {
-    mavenLocal()
-}
-
 dependencies {
     implementation 'org.magic.addons:jmix-magic-addons-core-starter:0.0.1'
 }
 ```
 
-> Core Addon 分两个模块：`jmix-magic-addons-core`（功能代码）与 `jmix-magic-addons-core-starter`（Spring Boot 自动配置，`CoreAutoConfiguration`）。宿主只需依赖 starter，它会自动引入 core 并完成自动装配。
+### 2. 配置 Liquibase
+
+在宿主项目 `changelog.xml` 中添加：
+
+```xml
+<include file="org/magic/jmix/addons/core/liquibase/changelog.xml"/>
+```
+
+> 详细说明见 [USAGE.md](USAGE.md)。
 
 ## 文档
 

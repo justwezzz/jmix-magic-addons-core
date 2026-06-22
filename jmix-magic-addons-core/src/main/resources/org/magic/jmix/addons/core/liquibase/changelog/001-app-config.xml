@@ -6,7 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="1" author="core-addon">
-        <createTable tableName="MAGIC_APP_CONFIG">
+        <createTable tableName="MAGIC_CORE_APP_CONFIG">
             <column name="ID" type="UUID">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -26,7 +26,7 @@
     </changeSet>
 
     <changeSet id="2" author="core-addon">
-        <createIndex indexName="IDX_APP_CONFIG_ON_KEY" tableName="MAGIC_APP_CONFIG" unique="true">
+        <createIndex indexName="IDX_APP_CONFIG_ON_KEY" tableName="MAGIC_CORE_APP_CONFIG" unique="true">
             <column name="CONFIG_KEY"/>
         </createIndex>
     </changeSet>
