@@ -1,6 +1,6 @@
 # Jmix Magic Core Addon
 
-一个为 Jmix 2.x 提供通用组件增强的插件。
+一个为 Jmix 2.x 提供通用组件增强的插件。此插件作为 Jmix Magic 系列插件的底座。
 
 ## 功能特性
 
@@ -16,15 +16,15 @@
 - **TreeGridScrollHelper** - TreeGrid 滚动定位工具，支持滚动到指定节点位置
 - **NotificationUtil** - 统一通知工具，按类型（success/error/warning/info）显示通知，时长/位置可配（`magic.core.*`），标题国际化
 - **MagicDetailWindowBuilderProcessor** - 通过 `@Primary` Bean 替换框架默认 `DetailWindowBuilderProcessor`，修复 Dialog 模式详情页未实际持久化时仍把过期副本回写列表、覆盖列表最新数据的脏数据问题（自动生效，无需配置）
-- **增强 Action**（`magic_list_create` / `magic_list_edit` / `magic_list_remove`）- 替代标准 `list_create`/`list_edit`/`list_remove`，统一 TAB/DIALOG 模式关闭回调时序、兼容 Container 与 MetaClass 两种 Grid 模式；TAB 模式与 tab-layout addon 协作实现保存后列表回填
+- **增强 Action**（`magic_list_create` / `magic_list_edit` / `magic_list_remove`）- 替代标准 `list_create`/`list_edit`/`list_remove`，统一 TAB/DIALOG 模式关闭回调时序、兼容 Container 与 MetaClass 两种 Grid 模式；TAB 模式与多标签页布局插件协作实现保存后列表回填
 - **DetailViewCloseCallback** - DetailView 关闭回调契约接口（四阶段：`onClose`/`onSaved`/`afterSaved`/`afterSaveHandler`），列表视图实现后由增强 Action 在 DIALOG 模式触发，统一关闭后处理时序
-- **多标签契约（tab 包）** - 从 tab-layout addon 下沉的「视图生命周期事件 + 展示模式/行为声明」契约，让任意 addon 仅依赖 core 即可声明多标签特性：
+- **多标签契约（tab 包）** -「视图生命周期事件 + 展示模式/行为声明」契约，让任意 addon 仅依赖 core 即可声明多标签特性：
   - `TabActivationAware` / `TabActivateEvent` / `TabDeactivateEvent` - 标签页激活/停用事件契约，视图 `implements TabActivationAware` 后用 `@Subscribe` 监听
   - `@PresentationModes` / `PresentationMode` / `PresentationModeHelper` - 视图展示模式声明（TAB/DIALOG/PAGE/INITIAL）
   - `@UncloseableTab` / `@MultipleOpenTab` - 标签页行为声明（不可关闭 / 允许多实例）
 
-  这些契约在普通 Jmix 宿主中无人触发但无副作用；安装 tab-layout addon 后自动获得多标签增强。详见 [USAGE.md](USAGE.md) 多标签契约章节。
-- **视图基类（view.base 包）** - 从 tab-layout 下沉的列表/详情视图基类：
+  这些契约在普通 Jmix 宿主中无人触发但无副作用；安装多标签页布局插件后自动获得多标签增强。详见 [USAGE.md](USAGE.md) 多标签契约章节。
+- **视图基类（view.base 包）** - 列表/详情视图基类：
   - `BaseListView<T>` - 列表视图基类，实现 `DetailViewCloseCallback` + `TabActivationAware`，提供四阶段关闭回调默认实现
   - `BaseDetailView<T>` - 详情视图基类，实现 `TabActivationAware`，提供自动标题（新建/编辑/查看）与保存状态追踪
 
