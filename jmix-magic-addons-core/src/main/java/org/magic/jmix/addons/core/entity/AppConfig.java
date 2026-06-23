@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @JmixEntity
 @Entity(name = "magic_core_AppConfig")
 @Table(name = "MAGIC_CORE_APP_CONFIG", indexes = {
-        @Index(name = "IDX_APP_CONFIG_ON_KEY", columnList = "CONFIG_KEY", unique = true)
+        @Index(name = "IDX_CORE_APP_CONFIG_KEY", columnList = "CONFIG_KEY", unique = true)
 })
 public class AppConfig extends BaseEntity {
 

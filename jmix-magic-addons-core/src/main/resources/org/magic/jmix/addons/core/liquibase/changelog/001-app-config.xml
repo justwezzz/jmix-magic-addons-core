@@ -3,9 +3,12 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="1" author="core-addon">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="MAGIC_CORE_APP_CONFIG"/></not>
+        </preConditions>
         <createTable tableName="MAGIC_CORE_APP_CONFIG">
             <column name="ID" type="UUID">
                 <constraints nullable="false" primaryKey="true"/>
@@ -16,9 +19,9 @@
             <column name="CONFIG_VALUE" type="VARCHAR(256)"/>
             <column name="DESCRIPTION" type="VARCHAR(256)"/>
             <column name="CREATE_TS" type="DATETIME"/>
-            <column name="CREATED_BY" type="VARCHAR(50)"/>
+            <column name="CREATED_BY" type="VARCHAR(64)"/>
             <column name="UPDATE_TS" type="DATETIME"/>
-            <column name="UPDATED_BY" type="VARCHAR(50)"/>
+            <column name="UPDATED_BY" type="VARCHAR(64)"/>
             <column name="VERSION" type="INT">
                 <constraints nullable="false"/>
             </column>
@@ -26,7 +29,10 @@
     </changeSet>
 
     <changeSet id="2" author="core-addon">
-        <createIndex indexName="IDX_APP_CONFIG_ON_KEY" tableName="MAGIC_CORE_APP_CONFIG" unique="true">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="IDX_CORE_APP_CONFIG_KEY"/></not>
+        </preConditions>
+        <createIndex indexName="IDX_CORE_APP_CONFIG_KEY" tableName="MAGIC_CORE_APP_CONFIG" unique="true">
             <column name="CONFIG_KEY"/>
         </createIndex>
     </changeSet>

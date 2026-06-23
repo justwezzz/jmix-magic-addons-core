@@ -28,7 +28,7 @@ public abstract class BaseEntity {
     protected Date createTs;
 
     @CreatedBy
-    @Column(name = "CREATED_BY", length = 50)
+    @Column(name = "CREATED_BY", length = 64)
     protected String createdBy;
 
     @LastModifiedDate
@@ -36,7 +36,7 @@ public abstract class BaseEntity {
     protected Date updateTs;
 
     @LastModifiedBy
-    @Column(name = "UPDATED_BY", length = 50)
+    @Column(name = "UPDATED_BY", length = 64)
     protected String updatedBy;
 
     @Column(name = "VERSION", nullable = false)
