@@ -51,3 +51,7 @@ jmix-studio.xml
 # Project specific
 openspec/
 docs/
+
+# Ãô¸ĞÅäÖÃÎÄ¼ş
+gradle.properties
+local.properties

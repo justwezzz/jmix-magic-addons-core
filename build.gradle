@@ -15,13 +15,146 @@ subprojects {
     }
 
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
 
     java {
         sourceCompatibility = '17'
         targetCompatibility = '17'
+        withJavadocJar()
+        withSourcesJar()
     }
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Javadoc) {
+        options.encoding = 'UTF-8'
+        options.addStringOption('Xdoclint:none', '-quiet')
+        failOnError = false
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
+
+                pom {
+                    url = 'https://github.com/justwezzz/jmix-magic-addons-core'
+
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'magic'
+                            name = 'magic'
+                            email = 'guofeng8023@gmail.com'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:git://github.com/justwezzz/jmix-magic-addons-core.git'
+                        developerConnection = 'scm:git:ssh://github.com/justwezzz/jmix-magic-addons-core.git'
+                        url = 'https://github.com/justwezzz/jmix-magic-addons-core'
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        sign publishing.publications.mavenJava
+    }
+}
+
+// ========================================
+// Central Portal 发布打包任务
+// ========================================
+
+tasks.register('createCentralBundle') {
+    description = 'Creates a ZIP bundle for Central Portal upload'
+    group = 'publishing'
+    
+    dependsOn ':jmix-magic-addons-core:publishToMavenLocal'
+    dependsOn ':jmix-magic-addons-core-starter:publishToMavenLocal'
+    
+    doLast {
+        def m2Repo = new File(System.getProperty('user.home'), '.m2/repository')
+        def groupIdPath = 'io/github/justwezzz'
+        def version = '0.0.1'
+        def modules = ['jmix-magic-addons-core', 'jmix-magic-addons-core-starter']
+        
+        def outputDir = file("${rootDir}/build/central")
+        def tempDir = file("${rootDir}/build/central-temp")
+        def zipFile = file("${outputDir}/central-bundle.zip")
+        
+        // 清理并创建目录
+        delete(tempDir)
+        outputDir.mkdirs()
+        
+        modules.each { module ->
+            def srcDir = file("${m2Repo}/${groupIdPath}/${module}/${version}")
+            def destDir = file("${tempDir}/${groupIdPath}/${module}/${version}")
+            
+            if (!srcDir.exists()) {
+                throw new GradleException("Module directory not found: ${srcDir}")
+            }
+            
+            destDir.mkdirs()
+            
+            // 复制文件并生成校验和
+            srcDir.eachFile { file ->
+                if (!file.name.endsWith('.md5') && !file.name.endsWith('.sha1')) {
+                    // 复制原文件
+                    def destFile = new File(destDir, file.name)
+                    destFile.bytes = file.bytes
+                    
+                    // 生成 MD5
+                    def md5 = java.security.MessageDigest.getInstance('MD5')
+                    md5.update(file.bytes)
+                    def md5Hex = md5.digest().encodeHex().toString()
+                    new File(destDir, "${file.name}.md5").text = md5Hex
+                    
+                    // 生成 SHA1
+                    def sha1 = java.security.MessageDigest.getInstance('SHA-1')
+                    sha1.update(file.bytes)
+                    def sha1Hex = sha1.digest().encodeHex().toString()
+                    new File(destDir, "${file.name}.sha1").text = sha1Hex
+                    
+                    logger.lifecycle("  Processed: ${file.name}")
+                }
+            }
+        }
+        
+        // 创建 ZIP
+        ant.zip(destfile: zipFile) {
+            fileset(dir: tempDir)
+        }
+        
+        // 清理临时目录
+        delete(tempDir)
+        
+        def zipSizeKB = Math.round(zipFile.length() / 1024)
+        logger.lifecycle("")
+        logger.lifecycle("=== Bundle Created Successfully ===")
+        logger.lifecycle("Location: ${zipFile}")
+        logger.lifecycle("Size: ${zipSizeKB} KB")
+        logger.lifecycle("")
+        logger.lifecycle("Next step: Upload to https://central.sonatype.com")
     }
 }

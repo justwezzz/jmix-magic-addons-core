@@ -3,9 +3,8 @@
  */
 apply plugin: 'java-library'
 apply plugin: 'io.jmix'
-apply plugin: 'maven-publish'
 
-group = 'org.magic.addons'
+group = 'io.github.justwezzz'
 archivesBaseName = 'jmix-magic-addons-core'
 
 jmix {
@@ -22,10 +21,14 @@ dependencies {
     implementation 'io.jmix.data:jmix-eclipselink-starter'
 }
 
+// 模块特定的 POM 信息
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+            pom {
+                name = 'Jmix Magic Addons Core'
+                description = '一个为 Jmix 2.x 提供通用组件增强的插件。此插件作为 Jmix Magic 系列插件的底座。'
+            }
         }
     }
 }

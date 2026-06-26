@@ -3,9 +3,8 @@
  */
 apply plugin: 'java-library'
 apply plugin: 'io.jmix'
-apply plugin: 'maven-publish'
 
-group = 'org.magic.addons'
+group = 'io.github.justwezzz'
 archivesBaseName = 'jmix-magic-addons-core-starter'
 
 dependencies {
@@ -13,10 +12,14 @@ dependencies {
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }
 
+// 模块特定的 POM 信息
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+            pom {
+                name = 'Jmix Magic Addons Core Starter'
+                description = 'Jmix Magic Addons Core 的 Spring Boot Starter，提供自动配置支持。'
+            }
         }
     }
 }
