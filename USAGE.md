@@ -8,7 +8,7 @@
 
 ```groovy
 dependencies {
-    implementation 'org.magic.addons:jmix-magic-addons-core-starter:0.0.1'
+    implementation 'io.github.justwezzz:jmix-magic-addons-core-starter:0.0.1'
 }
 ```
 
