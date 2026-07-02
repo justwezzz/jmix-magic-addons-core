@@ -1,5 +1,7 @@
 # Jmix Magic Core Addon
 
+中文 | [English](README_EN.md)
+
 一个为 Jmix 2.x 提供通用组件增强的插件。此插件作为 Jmix Magic 系列插件的底座。
 
 ## 功能特性
@@ -53,7 +55,7 @@ dependencies {
 
 ## 文档
 
-详细使用指南请参阅 [USAGE.md](USAGE.md)。
+详细使用指南请参阅 [USAGE.md](USAGE.md) | [English Version](USAGE_EN.md)。
 
 ## 版本要求
 

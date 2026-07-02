@@ -1,5 +1,7 @@
 # Jmix Magic Core Addon - 使用指南
 
+中文 | [English](USAGE_EN.md)
+
 本文档详细介绍 `jmix-magic-addons-core` 插件的使用方法。
 
 ## 安装
