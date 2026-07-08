@@ -10,7 +10,7 @@ This document provides detailed usage instructions for the `jmix-magic-addons-co
 
 ```groovy
 dependencies {
-    implementation 'io.github.justwezzz:jmix-magic-addons-core-starter:0.0.1'
+    implementation 'io.github.justwezzz:jmix-magic-addons-core-starter:0.0.2'
 }
 ```
 
@@ -1077,7 +1077,7 @@ Supplements untranslated Chinese messages in Jmix 2.8 framework, automatically e
 
 | Jmix Version | Vaadin Version | Plugin Version |
 |--------------|----------------|----------------|
-| 2.8.1+ | 24.x | 0.0.1 |
+| 2.8.1+ | 24.x | 0.0.2 |
 
 ## Changelog
 

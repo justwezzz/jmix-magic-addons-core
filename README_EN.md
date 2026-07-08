@@ -46,7 +46,7 @@ A plugin providing common component enhancements for Jmix 2.x. This plugin serve
 
 ```groovy
 dependencies {
-    implementation 'io.github.justwezzz:jmix-magic-addons-core-starter:0.0.1'
+    implementation 'io.github.justwezzz:jmix-magic-addons-core-starter:0.0.2'
 }
 ```
 
