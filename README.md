@@ -26,6 +26,13 @@
   - `@UncloseableTab` / `@MultipleOpenTab` - 标签页行为声明（不可关闭 / 允许多实例）
 
   这些契约在普通 Jmix 宿主中无人触发但无副作用；安装多标签页布局插件后自动获得多标签增强。详见 [USAGE.md](USAGE.md) 多标签契约章节。
+- **跨视图导航契约（view.navigation 包）** - 跨视图传数据的解耦方案：
+  - `ViewNavigationSupport` - 契约接口，定义 `open(viewClass)` 方法，返回 `ViewNavigationBuilder`
+  - `ViewNavigationBuilder<V>` - Builder 基类，提供 `withAfterViewCreated` / `withAfterViewClosed` / `navigate` 链式 API
+  - `AfterViewClosedEvent<V>` - 关闭事件，提供 `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)`
+  - `DefaultViewNavigationSupport` - 默认实现（走 Jmix viewNavigators），使用 `@ConditionalOnMissingBean` 注册
+
+  安装多标签页布局插件后，`TabRouterService` 自动覆盖默认实现，回调在多标签页架构下正常工作。任何依赖 Core addon 的模块注入 `ViewNavigationSupport` 即可跨视图传数据，无需直接依赖 tab-layout。
 - **视图基类（view.base 包）** - 列表/详情视图基类：
   - `BaseListView<T>` - 列表视图基类，实现 `DetailViewCloseCallback` + `TabActivationAware`，提供四阶段关闭回调默认实现
   - `BaseDetailView<T>` - 详情视图基类，实现 `TabActivationAware`，提供自动标题（新建/编辑/查看）与保存状态追踪

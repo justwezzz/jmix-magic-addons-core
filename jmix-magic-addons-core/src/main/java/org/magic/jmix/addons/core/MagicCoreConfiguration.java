@@ -8,12 +8,16 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.Views;
+import io.jmix.flowui.Views;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.builder.DetailWindowBuilderProcessor;
 import io.jmix.flowui.view.builder.EditedEntityTransformer;
 import org.magic.jmix.addons.core.view.MagicDetailWindowBuilderProcessor;
+import org.magic.jmix.addons.core.view.navigation.DefaultViewNavigationSupport;
+import org.magic.jmix.addons.core.view.navigation.ViewNavigationSupport;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -57,5 +61,11 @@ public class MagicCoreConfiguration {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
         actionsConfiguration.setBasePackages(Collections.singletonList("org.magic.jmix.addons.core.action"));
         return actionsConfiguration;
+    }
+
+    @Bean("magic_ViewNavigationSupport")
+    @ConditionalOnMissingBean(ViewNavigationSupport.class)
+    public ViewNavigationSupport viewNavigationSupport(Views views) {
+        return new DefaultViewNavigationSupport(views);
     }
 }
