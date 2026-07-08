@@ -30,7 +30,7 @@
   - `ViewNavigationSupport` - 契约接口，定义 `open(viewClass)` 方法，返回 `ViewNavigationBuilder`
   - `ViewNavigationBuilder<V>` - Builder 基类，提供 `withAfterViewCreated` / `withAfterViewClosed` / `navigate` 链式 API
   - `AfterViewClosedEvent<V>` - 关闭事件，提供 `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)`
-  - `DefaultViewNavigationSupport` - 默认实现（走 Jmix viewNavigators），使用 `@ConditionalOnMissingBean` 注册
+  - `DefaultViewNavigationSupport` - 默认实现（走 Jmix viewNavigators），可被其他插件的 `@Primary` 实现覆盖
 
   安装多标签页布局插件后自动获得增强，回调在多标签页架构下正常工作。任何依赖 Core addon 的模块注入 `ViewNavigationSupport` 即可跨视图传数据，无需感知具体实现由谁提供。
 - **视图基类（view.base 包）** - 列表/详情视图基类：

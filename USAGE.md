@@ -943,7 +943,7 @@ public class FileListView extends StandardListView<File> implements TabActivatio
 
 - 使用方只依赖 core，注入 `ViewNavigationSupport` 即可跨视图传数据；
 - 普通宿主中：使用默认实现（走 Jmix 原生 `viewNavigators`）；
-- 其他插件可通过 `@ConditionalOnMissingBean` 机制提供覆盖实现。
+- 其他插件可通过 `@Primary` 机制提供覆盖实现。
 
 ### 契约清单
 
@@ -952,7 +952,7 @@ public class FileListView extends StandardListView<File> implements TabActivatio
 | `ViewNavigationSupport` | 接口 | 契约接口，定义 `open(viewClass)` 方法，返回 `ViewNavigationBuilder<V>` |
 | `ViewNavigationBuilder<V>` | Builder 基类 | 提供 `withAfterViewCreated` / `withAfterViewClosed` / `navigate` 链式 API |
 | `AfterViewClosedEvent<V>` | 事件 | 关闭事件，提供 `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)` |
-| `DefaultViewNavigationSupport` | 默认实现 | 走 Jmix 原生 `viewNavigators`，使用 `@ConditionalOnMissingBean` 注册 |
+| `DefaultViewNavigationSupport` | 默认实现 | 走 Jmix 原生 `viewNavigators`，可被其他插件的 `@Primary` 实现覆盖 |
 
 ### 使用方式
 
@@ -984,7 +984,7 @@ viewNavigationSupport.open(UserDetailView.class)
 | 场景 | 注入的实现 | 说明 |
 |------|-----------|------|
 | 无覆盖实现 | `DefaultViewNavigationSupport` | 走 Jmix 原生 `viewNavigators` |
-| 有覆盖实现 | 覆盖实现类 | 由其他插件通过 `@ConditionalOnMissingBean` 提供 |
+| 有覆盖实现 | 覆盖实现类（`@Primary`） | 由其他插件通过 `@Primary` 提供，Spring 自动优先注入 |
 
 ### ViewNavigationBuilder API
 

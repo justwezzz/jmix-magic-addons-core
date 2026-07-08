@@ -943,7 +943,7 @@ Under multi-tab architecture, Jmix's native `viewNavigators.view().withAfterNavi
 
 - Users only depend on core, inject `ViewNavigationSupport` for cross-view data passing;
 - In plain hosts: Uses default implementation (Jmix native `viewNavigators`);
-- Other plugins can provide overriding implementations via `@ConditionalOnMissingBean` mechanism.
+- Other plugins can provide overriding implementations via `@Primary` mechanism.
 
 ### Contract List
 
@@ -952,7 +952,7 @@ Under multi-tab architecture, Jmix's native `viewNavigators.view().withAfterNavi
 | `ViewNavigationSupport` | Interface | Contract interface, defines `open(viewClass)` method, returns `ViewNavigationBuilder<V>` |
 | `ViewNavigationBuilder<V>` | Builder base class | Provides `withAfterViewCreated` / `withAfterViewClosed` / `navigate` fluent API |
 | `AfterViewClosedEvent<V>` | Event | Close event, provides `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)` |
-| `DefaultViewNavigationSupport` | Default implementation | Uses Jmix native `viewNavigators`, registered with `@ConditionalOnMissingBean` |
+| `DefaultViewNavigationSupport` | Default implementation | Uses Jmix native `viewNavigators`, can be overridden by other plugins' `@Primary` implementation |
 
 ### Usage
 
@@ -984,7 +984,7 @@ viewNavigationSupport.open(UserDetailView.class)
 | Scenario | Injected Implementation | Description |
 |----------|------------------------|-------------|
 | No override | `DefaultViewNavigationSupport` | Uses Jmix native `viewNavigators` |
-| Override exists | Override implementation class | Provided by other plugins via `@ConditionalOnMissingBean` |
+| Override exists | Override implementation class (`@Primary`) | Provided by other plugins via `@Primary`, Spring auto-injects with priority |
 
 ### ViewNavigationBuilder API
 
@@ -1097,4 +1097,4 @@ Supplements untranslated Chinese messages in Jmix 2.8 framework, automatically e
 
 ### 0.0.2
 
-- Added cross-view navigation contracts (`view.navigation` package): `ViewNavigationSupport` contract interface + `ViewNavigationBuilder<V>` builder base class + `AfterViewClosedEvent<V>` close event + `DefaultViewNavigationSupport` default implementation. Solves the issue where `withAfterNavigationHandler` fails under multi-tab architecture; other plugins can provide overriding implementations via `@ConditionalOnMissingBean` mechanism.
+- Added cross-view navigation contracts (`view.navigation` package): `ViewNavigationSupport` contract interface + `ViewNavigationBuilder<V>` builder base class + `AfterViewClosedEvent<V>` close event + `DefaultViewNavigationSupport` default implementation. Solves the issue where `withAfterNavigationHandler` fails under multi-tab architecture; other plugins can provide overriding implementations via `@Primary` mechanism.

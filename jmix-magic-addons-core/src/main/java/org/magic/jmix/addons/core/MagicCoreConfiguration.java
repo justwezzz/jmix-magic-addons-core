@@ -17,7 +17,6 @@ import io.jmix.flowui.view.builder.EditedEntityTransformer;
 import org.magic.jmix.addons.core.view.MagicDetailWindowBuilderProcessor;
 import org.magic.jmix.addons.core.view.navigation.DefaultViewNavigationSupport;
 import org.magic.jmix.addons.core.view.navigation.ViewNavigationSupport;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -64,7 +63,6 @@ public class MagicCoreConfiguration {
     }
 
     @Bean("magic_ViewNavigationSupport")
-    @ConditionalOnMissingBean(ViewNavigationSupport.class)
     public ViewNavigationSupport viewNavigationSupport(Views views) {
         return new DefaultViewNavigationSupport(views);
     }

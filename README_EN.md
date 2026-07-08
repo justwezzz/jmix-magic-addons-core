@@ -30,7 +30,7 @@ A plugin providing common component enhancements for Jmix 2.x. This plugin serve
   - `ViewNavigationSupport` - Contract interface, defines `open(viewClass)` method, returns `ViewNavigationBuilder`
   - `ViewNavigationBuilder<V>` - Builder base class, provides `withAfterViewCreated` / `withAfterViewClosed` / `navigate` fluent API
   - `AfterViewClosedEvent<V>` - Close event, provides `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)`
-  - `DefaultViewNavigationSupport` - Default implementation (uses Jmix viewNavigators), registered with `@ConditionalOnMissingBean`
+  - `DefaultViewNavigationSupport` - Default implementation (uses Jmix viewNavigators), can be overridden by other plugins' `@Primary` implementation
 
   After installing multi-tab layout plugin, automatically gains enhancements with callbacks working correctly under multi-tab architecture. Any module depending on Core addon can inject `ViewNavigationSupport` for cross-view data passing without knowing who provides the implementation.
 - **View Base Classes (view.base package)** - List/detail view base classes:

@@ -6,7 +6,7 @@ import io.jmix.flowui.view.View;
  * 视图导航支持接口，提供跨视图传数据和回调的能力。
  * <p>
  * Core addon 提供默认实现（基于 Jmix 原生 viewNavigators），
- * 其他插件可通过实现该接口提供覆盖实现（使用 {@code @ConditionalOnMissingBean} 机制自动覆盖）。
+ * 其他插件可通过实现该接口并标注 {@code @Primary} 提供覆盖实现，Spring 自动优先注入。
  * 调用方注入 {@code ViewNavigationSupport} 即可，无需感知底层实现差异。
  * <p>
  * 使用方式：
