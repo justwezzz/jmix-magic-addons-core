@@ -40,8 +40,9 @@ Add to your project's `changelog.xml`:
 12. [Enhanced Actions - List CRUD Timing Unification](#enhanced-actions---list-crud-timing-unification)
 13. [DetailViewCloseCallback - Detail Close Callback Contract](#detailviewclosecallback---detail-close-callback-contract)
 14. [Multi-Tab Contracts (tab package) - Cross-addon Decoupling](#multi-tab-contracts-tab-package---cross-addon-decoupling)
-15. [View Base Classes (view.base package)](#view-base-classes-viewbase-package)
-16. [Jmix Framework Translation Supplement](#jmix-framework-translation-supplement)
+15. [Cross-View Navigation Contracts (view.navigation package) - Cross-View Data Passing Decoupling](#cross-view-navigation-contracts-viewnavigation-package---cross-view-data-passing-decoupling)
+16. [View Base Classes (view.base package)](#view-base-classes-viewbase-package)
+17. [Jmix Framework Translation Supplement](#jmix-framework-translation-supplement)
 
 ---
 
@@ -932,6 +933,91 @@ public class FileListView extends StandardListView<File> implements TabActivatio
 
 ---
 
+## Cross-View Navigation Contracts (view.navigation package) - Cross-View Data Passing Decoupling
+
+Decoupling solution for cross-view data passing, located in `org.magic.jmix.addons.core.view.navigation` package.
+
+### Background / Why in core
+
+Under multi-tab architecture, Jmix's native `viewNavigators.view().withAfterNavigationHandler()` doesn't work (callback depends on origin view detach, but view doesn't detach under multi-tab). The alternative is `tabRouterService.open().withAfterViewCreated()`, but this requires depending on tab-layout addon, violating the principle of no cross-addon dependencies.
+
+Solved via strategy pattern: Core addon defines `ViewNavigationSupport` contract interface + default implementation (uses Jmix viewNavigators), Tab-layout addon's `TabRouterService` implements this interface and provides an overriding bean. Any module depending on Core addon can inject `ViewNavigationSupport` for cross-view data passing, **without directly depending on tab-layout addon**.
+
+### Contract List
+
+| Class | Type | Description |
+|-------|------|-------------|
+| `ViewNavigationSupport` | Interface | Contract interface, defines `open(viewClass)` method, returns `ViewNavigationBuilder<V>` |
+| `ViewNavigationBuilder<V>` | Builder base class | Provides `withAfterViewCreated` / `withAfterViewClosed` / `navigate` fluent API |
+| `AfterViewClosedEvent<V>` | Event | Close event, provides `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)` |
+| `DefaultViewNavigationSupport` | Default implementation | Uses Jmix native `viewNavigators`, registered with `@ConditionalOnMissingBean` |
+
+### Usage
+
+```java
+import org.magic.jmix.addons.core.view.navigation.ViewNavigationSupport;
+import org.magic.jmix.addons.core.view.navigation.AfterViewClosedEvent;
+
+@Autowired
+private ViewNavigationSupport viewNavigationSupport;
+
+// Open view and pass initialization parameters
+viewNavigationSupport.open(MyView.class)
+    .withAfterViewCreated(view -> view.setData(data))
+    .navigate();
+
+// Open view and receive close result
+viewNavigationSupport.open(UserDetailView.class)
+    .withAfterViewCreated(view -> view.setEntityToEdit(user))
+    .withAfterViewClosed(event -> {
+        if (event.closedWith(StandardOutcome.SAVE)) {
+            collectionDc.replaceItem(event.getView().getEditedEntity());
+        }
+    })
+    .navigate();
+```
+
+### Bean Override Mechanism
+
+| Scenario | Injected Implementation | Description |
+|----------|------------------------|-------------|
+| Tab-layout addon installed | `TabRouterService` | Callbacks work correctly under multi-tab architecture |
+| Tab-layout addon not installed | `DefaultViewNavigationSupport` | Falls back to Jmix native `viewNavigators` (works in single-tab, `withAfterNavigationHandler` fails in multi-tab) |
+
+### ViewNavigationBuilder API
+
+| Method | Description |
+|--------|-------------|
+| `withAfterViewCreated(Consumer<V>)` | One-time callback, triggered after view creation, before BeforeShow |
+| `withAfterViewClosed(Consumer<AfterViewClosedEvent<V>>)` | One-time close callback, triggered when target view's AfterCloseEvent fires |
+| `navigate()` | Execute navigation, trigger route |
+
+### AfterViewClosedEvent Properties
+
+| Method | Description |
+|--------|-------------|
+| `getView()` | Closed view instance |
+| `getCloseAction()` | Close action, consistent with `View.AfterCloseEvent.getCloseAction()` |
+| `closedWith(StandardOutcome)` | Check if view closed with specified outcome |
+
+### Limitations
+
+`viewNavigationSupport.open()` only supports parameterless routes (e.g., `@Route("users")`), does not support routes with path parameters (e.g., `@Route("user/:id")`). For parameterized routes, use `viewNavigators.detailView().navigate()`.
+
+### Tab-layout Addon Override Implementation
+
+| Class | Description |
+|-------|-------------|
+| `TabRouterService` | Implements `ViewNavigationSupport`, `open()` returns `TabViewNavigator` |
+| `TabViewNavigator<V>` | Extends `ViewNavigationBuilder<V>`, overrides `navigate()` for multi-tab routing |
+
+### Who Should Use
+
+- **Addons needing cross-view data passing**: Depend on core, inject `ViewNavigationSupport`, no need to directly depend on tab-layout
+- **Host projects**: Inject `ViewNavigationSupport` or directly inject `TabRouterService` (the latter has more features including tab management, Drawer control, etc.)
+
+---
+
 ## View Base Classes (view.base package)
 
 List/detail view base classes, located in `org.magic.jmix.addons.core.view.base`.
@@ -1011,3 +1097,4 @@ Supplements untranslated Chinese messages in Jmix 2.8 framework, automatically e
 - Added multi-tab contracts (`tab` package): `TabActivationAware` / `TabActivateEvent` / `TabDeactivateEvent` (tab activation/deactivation event contracts), `@PresentationModes` / `PresentationMode` / `PresentationModeHelper` (presentation mode declaration), `@UncloseableTab` / `@MultipleOpenTab` (tab behavior declaration). Allow other addons to declare multi-tab features by only depending on core, no side effects in plain hosts, automatically gain enhancements after installing multi-tab layout plugin.
 - Added view base classes `BaseListView` / `BaseDetailView` (`org.magic.jmix.addons.core.view.base`). `BaseListView` provides `DetailViewCloseCallback` four-phase close callback default implementations; `BaseDetailView` provides auto title and save state tracking; auto title messages `detailView.title.new/edit/view` also provided.
 - Added `CursorLazyGrid` cursor pagination lazy loading Grid component (`CursorLazyGrid` / `CursorPagedDataProvider` / `CursorPage` / `CursorPageFetcher`), adapting cursor sequential pagination backend to Grid native scroll lazy loading, supports undefined size mode and async `enablePushUpdates`; note its DataProvider is **fully cached** (only grows), evaluate memory for large data scenarios.
+- Added cross-view navigation contracts (`view.navigation` package): `ViewNavigationSupport` contract interface + `ViewNavigationBuilder<V>` builder base class + `AfterViewClosedEvent<V>` close event + `DefaultViewNavigationSupport` default implementation. Solves the issue where `withAfterNavigationHandler` fails under multi-tab architecture and addons cannot depend on tab-layout; after installing tab-layout, `TabRouterService` automatically overrides default implementation.

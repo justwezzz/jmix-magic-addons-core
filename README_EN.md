@@ -26,6 +26,13 @@ A plugin providing common component enhancements for Jmix 2.x. This plugin serve
   - `@UncloseableTab` / `@MultipleOpenTab` - Tab behavior declaration (non-closeable / allow multiple instances)
 
   These contracts are not triggered in plain Jmix hosts but have no side effects; automatically gain multi-tab enhancements after installing multi-tab layout plugin. See [USAGE_EN.md](USAGE_EN.md) multi-tab contracts section.
+- **Cross-View Navigation Contracts (view.navigation package)** - Decoupling solution for cross-view data passing:
+  - `ViewNavigationSupport` - Contract interface, defines `open(viewClass)` method, returns `ViewNavigationBuilder`
+  - `ViewNavigationBuilder<V>` - Builder base class, provides `withAfterViewCreated` / `withAfterViewClosed` / `navigate` fluent API
+  - `AfterViewClosedEvent<V>` - Close event, provides `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)`
+  - `DefaultViewNavigationSupport` - Default implementation (uses Jmix viewNavigators), registered with `@ConditionalOnMissingBean`
+
+  After installing multi-tab layout plugin, `TabRouterService` automatically overrides the default implementation, callbacks work correctly under multi-tab architecture. Any module depending on Core addon can inject `ViewNavigationSupport` for cross-view data passing without directly depending on tab-layout.
 - **View Base Classes (view.base package)** - List/detail view base classes:
   - `BaseListView<T>` - List view base class, implements `DetailViewCloseCallback` + `TabActivationAware`, provides default implementations for four-phase close callbacks
   - `BaseDetailView<T>` - Detail view base class, implements `TabActivationAware`, provides auto titles (new/edit/view) and save state tracking
