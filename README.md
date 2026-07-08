@@ -32,7 +32,7 @@
   - `AfterViewClosedEvent<V>` - 关闭事件，提供 `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)`
   - `DefaultViewNavigationSupport` - 默认实现（走 Jmix viewNavigators），使用 `@ConditionalOnMissingBean` 注册
 
-  安装多标签页布局插件后，`TabRouterService` 自动覆盖默认实现，回调在多标签页架构下正常工作。任何依赖 Core addon 的模块注入 `ViewNavigationSupport` 即可跨视图传数据，无需直接依赖 tab-layout。
+  安装多标签页布局插件后自动获得增强，回调在多标签页架构下正常工作。任何依赖 Core addon 的模块注入 `ViewNavigationSupport` 即可跨视图传数据，无需感知具体实现由谁提供。
 - **视图基类（view.base 包）** - 列表/详情视图基类：
   - `BaseListView<T>` - 列表视图基类，实现 `DetailViewCloseCallback` + `TabActivationAware`，提供四阶段关闭回调默认实现
   - `BaseDetailView<T>` - 详情视图基类，实现 `TabActivationAware`，提供自动标题（新建/编辑/查看）与保存状态追踪

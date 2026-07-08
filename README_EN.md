@@ -32,7 +32,7 @@ A plugin providing common component enhancements for Jmix 2.x. This plugin serve
   - `AfterViewClosedEvent<V>` - Close event, provides `getView()` / `getCloseAction()` / `closedWith(StandardOutcome)`
   - `DefaultViewNavigationSupport` - Default implementation (uses Jmix viewNavigators), registered with `@ConditionalOnMissingBean`
 
-  After installing multi-tab layout plugin, `TabRouterService` automatically overrides the default implementation, callbacks work correctly under multi-tab architecture. Any module depending on Core addon can inject `ViewNavigationSupport` for cross-view data passing without directly depending on tab-layout.
+  After installing multi-tab layout plugin, automatically gains enhancements with callbacks working correctly under multi-tab architecture. Any module depending on Core addon can inject `ViewNavigationSupport` for cross-view data passing without knowing who provides the implementation.
 - **View Base Classes (view.base package)** - List/detail view base classes:
   - `BaseListView<T>` - List view base class, implements `DetailViewCloseCallback` + `TabActivationAware`, provides default implementations for four-phase close callbacks
   - `BaseDetailView<T>` - Detail view base class, implements `TabActivationAware`, provides auto titles (new/edit/view) and save state tracking

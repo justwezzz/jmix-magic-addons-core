@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  * 默认的视图导航支持实现，基于 Jmix 原生 viewNavigators。
  * <p>
  * 在多标签页架构下，{@code withAfterNavigationHandler} 会失效（回调依赖 origin view detach），
- * 引入 Tab Layout addon 后会被 {@code TabRouterService} 的实现自动覆盖。
+ * 其他插件可通过实现 {@link ViewNavigationSupport} 接口提供覆盖实现，自动替代此默认实现。
  */
 public class DefaultViewNavigationSupport implements ViewNavigationSupport {
 
@@ -61,9 +61,9 @@ public class DefaultViewNavigationSupport implements ViewNavigationSupport {
                 // 通过 UI.navigate + beforeClientResponse 获取创建的视图实例
                 com.vaadin.flow.component.UI.getCurrent().navigate(route);
                 // 默认实现无法可靠获取视图实例来执行回调
-                // 这是已知限制——引入 Tab Layout addon 后自动解决
+                // 这是已知限制——安装提供覆盖实现的插件后自动解决
                 log.warn("[DefaultViewNavigation] withAfterNavigationHandler may not work under multi-tab architecture. " +
-                        "Consider adding Tab Layout addon for full support.");
+                        "Consider installing a plugin that provides ViewNavigationSupport override for full support.");
             } else {
                 com.vaadin.flow.component.UI.getCurrent().navigate(route);
             }
@@ -71,9 +71,9 @@ public class DefaultViewNavigationSupport implements ViewNavigationSupport {
             // afterViewClosed 通过 AfterCloseListener 实现
             if (afterViewClosedCallback != null) {
                 // 需要视图实例才能注册监听器，默认实现无法可靠获取
-                // 这是已知限制——引入 Tab Layout addon 后自动解决
+                // 这是已知限制——安装提供覆盖实现的插件后自动解决
                 log.warn("[DefaultViewNavigation] withAfterViewClosed may not work under multi-tab architecture. " +
-                        "Consider adding Tab Layout addon for full support.");
+                        "Consider installing a plugin that provides ViewNavigationSupport override for full support.");
             }
         }
     }

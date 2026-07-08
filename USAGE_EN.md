@@ -939,9 +939,11 @@ Decoupling solution for cross-view data passing, located in `org.magic.jmix.addo
 
 ### Background / Why in core
 
-Under multi-tab architecture, Jmix's native `viewNavigators.view().withAfterNavigationHandler()` doesn't work (callback depends on origin view detach, but view doesn't detach under multi-tab). The alternative is `tabRouterService.open().withAfterViewCreated()`, but this requires depending on tab-layout addon, violating the principle of no cross-addon dependencies.
+Under multi-tab architecture, Jmix's native `viewNavigators.view().withAfterNavigationHandler()` doesn't work (callback depends on origin view detach, but view doesn't detach under multi-tab). Core addon defines `ViewNavigationSupport` contract interface + default implementation (uses Jmix viewNavigators), other plugins can provide overriding implementations by implementing this interface. Users inject `ViewNavigationSupport` for cross-view data passing, gaining better extensibility through the contract interface.
 
-Solved via strategy pattern: Core addon defines `ViewNavigationSupport` contract interface + default implementation (uses Jmix viewNavigators), Tab-layout addon's `TabRouterService` implements this interface and provides an overriding bean. Any module depending on Core addon can inject `ViewNavigationSupport` for cross-view data passing, **without directly depending on tab-layout addon**.
+- Users only depend on core, inject `ViewNavigationSupport` for cross-view data passing;
+- In plain hosts: Uses default implementation (Jmix native `viewNavigators`);
+- Other plugins can provide overriding implementations via `@ConditionalOnMissingBean` mechanism.
 
 ### Contract List
 
@@ -981,8 +983,8 @@ viewNavigationSupport.open(UserDetailView.class)
 
 | Scenario | Injected Implementation | Description |
 |----------|------------------------|-------------|
-| Tab-layout addon installed | `TabRouterService` | Callbacks work correctly under multi-tab architecture |
-| Tab-layout addon not installed | `DefaultViewNavigationSupport` | Falls back to Jmix native `viewNavigators` (works in single-tab, `withAfterNavigationHandler` fails in multi-tab) |
+| No override | `DefaultViewNavigationSupport` | Uses Jmix native `viewNavigators` |
+| Override exists | Override implementation class | Provided by other plugins via `@ConditionalOnMissingBean` |
 
 ### ViewNavigationBuilder API
 
@@ -1004,17 +1006,12 @@ viewNavigationSupport.open(UserDetailView.class)
 
 `viewNavigationSupport.open()` only supports parameterless routes (e.g., `@Route("users")`), does not support routes with path parameters (e.g., `@Route("user/:id")`). For parameterized routes, use `viewNavigators.detailView().navigate()`.
 
-### Tab-layout Addon Override Implementation
-
-| Class | Description |
-|-------|-------------|
-| `TabRouterService` | Implements `ViewNavigationSupport`, `open()` returns `TabViewNavigator` |
-| `TabViewNavigator<V>` | Extends `ViewNavigationBuilder<V>`, overrides `navigate()` for multi-tab routing |
-
 ### Who Should Use
 
-- **Addons needing cross-view data passing**: Depend on core, inject `ViewNavigationSupport`, no need to directly depend on tab-layout
-- **Host projects**: Inject `ViewNavigationSupport` or directly inject `TabRouterService` (the latter has more features including tab management, Drawer control, etc.)
+- **Views needing cross-view data passing under multi-tab architecture**: **Must** use `ViewNavigationSupport`. Jmix's native `viewNavigators.view().withAfterNavigationHandler()` doesn't work under multi-tab architecture, making `ViewNavigationSupport` the only reliable way to pass data between views.
+- **Views not under multi-tab architecture**: Also recommended to use `ViewNavigationSupport`. The default implementation uses Jmix viewNavigators with equivalent functionality; plus you gain extensibility through the contract interface — when multi-tab layout plugin is installed later, no code changes needed to automatically get enhancements.
+
+> This contract's **runtime implementation** (callback capabilities under multi-tab architecture, etc.) is provided by other plugins. Core only provides the contract and default implementation, not multi-tab architecture runtime.
 
 ---
 
@@ -1100,4 +1097,4 @@ Supplements untranslated Chinese messages in Jmix 2.8 framework, automatically e
 
 ### 0.0.2
 
-- Added cross-view navigation contracts (`view.navigation` package): `ViewNavigationSupport` contract interface + `ViewNavigationBuilder<V>` builder base class + `AfterViewClosedEvent<V>` close event + `DefaultViewNavigationSupport` default implementation. Solves the issue where `withAfterNavigationHandler` fails under multi-tab architecture and addons cannot depend on tab-layout; after installing tab-layout, `TabRouterService` automatically overrides default implementation.
+- Added cross-view navigation contracts (`view.navigation` package): `ViewNavigationSupport` contract interface + `ViewNavigationBuilder<V>` builder base class + `AfterViewClosedEvent<V>` close event + `DefaultViewNavigationSupport` default implementation. Solves the issue where `withAfterNavigationHandler` fails under multi-tab architecture; other plugins can provide overriding implementations via `@ConditionalOnMissingBean` mechanism.

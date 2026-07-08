@@ -6,8 +6,8 @@ import io.jmix.flowui.view.View;
  * 视图导航支持接口，提供跨视图传数据和回调的能力。
  * <p>
  * Core addon 提供默认实现（基于 Jmix 原生 viewNavigators），
- * Tab Layout addon 提供覆盖实现（基于 TabRouterService）。
- * 宿主项目引入 Tab Layout 后自动使用覆盖实现，调用方无需感知底层差异。
+ * 其他插件可通过实现该接口提供覆盖实现（使用 {@code @ConditionalOnMissingBean} 机制自动覆盖）。
+ * 调用方注入 {@code ViewNavigationSupport} 即可，无需感知底层实现差异。
  * <p>
  * 使用方式：
  * <pre>
