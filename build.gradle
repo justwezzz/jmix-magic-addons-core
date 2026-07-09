@@ -18,6 +18,8 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
 
+    version = rootProject.version
+
     java {
         sourceCompatibility = '17'
         targetCompatibility = '17'
@@ -78,7 +80,6 @@ subprojects {
     }
 
     signing {
-        // 仅在发布到 Maven Central 时需要签名，本地发布跳过
         required { gradle.taskGraph.hasTask('publishToSonatype') }
         sign publishing.publications.mavenJava
     }
@@ -98,7 +99,7 @@ tasks.register('createCentralBundle') {
     doLast {
         def m2Repo = new File(System.getProperty('user.home'), '.m2/repository')
         def groupIdPath = 'io/github/justwezzz'
-        def version = '0.0.1'
+        def version = project.version
         def modules = ['jmix-magic-addons-core', 'jmix-magic-addons-core-starter']
         
         def outputDir = file("${rootDir}/build/central")
@@ -154,6 +155,7 @@ tasks.register('createCentralBundle') {
         def zipSizeKB = Math.round(zipFile.length() / 1024)
         logger.lifecycle("")
         logger.lifecycle("=== Bundle Created Successfully ===")
+        logger.lifecycle("Version: ${version}")
         logger.lifecycle("Location: ${zipFile}")
         logger.lifecycle("Size: ${zipSizeKB} KB")
         logger.lifecycle("")
